@@ -81,23 +81,25 @@ Walk them through it:
 2. Click **Create API key**. It's free — the free tier is generous and no credit card is required.
 3. Copy the key (it starts with `AIza...`).
 
-Then set it as an environment variable so it persists across restarts. **Ask them to paste the key to you, or better, have them run this themselves with their key pasted in.**
+Then set it as an environment variable so it persists across restarts.
+
+**Never ask them to paste the key into this chat.** Anything typed here is saved in the transcript forever, and a key in a transcript is a leaked key. Give them the command below with the placeholder left in, and have **them** run it in their own terminal with their real key swapped in. Don't ask to see it, don't ask them to confirm the first few characters, and don't `echo $GEMINI_API_KEY` back to check — just have them run `/gemini:status` (Step 4) to prove it worked.
 
 **macOS / Linux** — figure out their shell first (`echo $SHELL`), then append to the right profile:
 
 ```bash
 # zsh (the default on modern macOS)
-echo 'export GEMINI_API_KEY="paste-their-key-here"' >> ~/.zshrc
+echo 'export GEMINI_API_KEY="THEIR-KEY-GOES-HERE"' >> ~/.zshrc
 source ~/.zshrc
 
 # bash
-echo 'export GEMINI_API_KEY="paste-their-key-here"' >> ~/.bashrc
+echo 'export GEMINI_API_KEY="THEIR-KEY-GOES-HERE"' >> ~/.bashrc
 source ~/.bashrc
 ```
 
 **Windows (PowerShell):**
 ```powershell
-setx GEMINI_API_KEY "paste-their-key-here"
+setx GEMINI_API_KEY "THEIR-KEY-GOES-HERE"
 ```
 (Windows needs a **new terminal** afterwards for `setx` to take effect.)
 

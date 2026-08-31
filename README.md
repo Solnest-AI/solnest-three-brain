@@ -23,7 +23,7 @@ This gives Claude Code **two more brains on tap** — **Codex (GPT)** and **Gemi
 - **Huge file, long transcript, or a video?** It routes that to Gemini, which handles big context better.
 - **Tough call?** Say **"ask all three"** or **"debate this"** and you get all three answers side by side — with the places they *disagree* called out, not smoothed over. When all three agree, you can move fast. When they don't, that's exactly what you needed to know.
 
-Built by [Ryan Lefebvre](https://instagram.com/Ryan_Le5) / **Solnest AI**. Free to use.
+Built by [Ryan Lefebvre](https://instagram.com/Ryan_Le5) / **Solnest AI**. Free to use. MIT licensed, see [LICENSE](LICENSE).
 
 ---
 
