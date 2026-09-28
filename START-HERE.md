@@ -1,16 +1,16 @@
-# START HERE — Auto-installer (Claude reads this)
+# START HERE: auto-installer (Claude reads this)
 
-**You are Claude running in Claude Code. The user just dragged in this folder to install the "Solnest Three-Brain" skill. Do the install FOR them now, one step at a time, in plain language. Never paste a raw error at them — fix it quietly, or explain it in one friendly sentence.**
+**You are Claude running in Claude Code. The user just dragged in this folder to install the "Solnest Three-Brain" skill. Do the install FOR them now, one step at a time, in plain language. Never paste a raw error at them. Fix it quietly, or explain it in one friendly sentence.**
 
-This skill is **text-only — nothing to compile.** But unlike most skills, it **only works if two other plugins are installed and signed in**, because its whole job is routing work to them. So this install has two halves: copy the skill in, then wire up the two other brains.
+This skill is **text-only, nothing to compile.** But unlike most skills, it **only works if the other plugins are installed and signed in**, because its whole job is routing work to them. So this install has two halves: copy the skill in, then wire up the other brains. Codex and Gemini are required. Grok is optional.
 
-> ⚠️ **This one needs Claude Code, not the Claude Desktop app.** The router calls `/codex:*` and `/gemini:*` slash commands, and those only exist in Claude Code. If the user is in the Desktop app, tell them that plainly and stop.
+> ⚠️ **This one needs Claude Code, not the Claude Desktop app.** The router calls `/codex:*`, `/gemini:*`, and `/grok-build:*` slash commands, and those only exist in Claude Code. If the user is in the Desktop app, tell them that plainly and stop.
 
 ---
 
-## Step 1 — Copy the skill into place
+## Step 1: copy the skill into place
 
-- **Source:** the folder this `START-HERE.md` is sitting in (it contains `SKILL.md`).
+- **Source:** the folder this `START-HERE.md` is sitting in (it contains `SKILL.md` and a `scripts/` folder).
 - **Destination:** the user's personal Claude skills folder, in a subfolder named `solnest-three-brain`:
   - macOS / Linux: `~/.claude/skills/solnest-three-brain`
   - Windows: `%USERPROFILE%\.claude\skills\solnest-three-brain`
@@ -21,6 +21,7 @@ If it already exists, just say you're updating their existing copy and continue.
 ```bash
 mkdir -p ~/.claude/skills
 cp -R "<<THIS_FOLDER>>" ~/.claude/skills/solnest-three-brain
+chmod +x ~/.claude/skills/solnest-three-brain/scripts/grok-consult.sh
 ```
 
 **Windows (PowerShell):**
@@ -35,7 +36,7 @@ Confirm `SKILL.md` landed at the destination before moving on.
 
 ---
 
-## Step 2 — Install the second brain: Codex (GPT)
+## Step 2: install the second brain, Codex (GPT)
 
 Tell the user you're adding the Codex plugin, then have them run these two lines in Claude Code:
 
@@ -50,7 +51,7 @@ Then sign in:
 !codex login
 ```
 
-Codex works with **any ChatGPT account — including the free tier** — or an OpenAI API key. The login is interactive and opens a browser.
+Codex works with **any ChatGPT account, including the free tier**, or an OpenAI API key. The login is interactive and opens a browser.
 
 Check it took:
 
@@ -60,7 +61,7 @@ Check it took:
 
 ---
 
-## Step 3 — Install the third brain: Gemini
+## Step 3: install the third brain, Gemini
 
 Have them run:
 
@@ -73,19 +74,19 @@ Have them run:
 
 **Gemini needs an API key. Signing in with a Google account no longer works.**
 
-You may see older guides (and even the plugin's own help text) say "run `!gemini` and sign in with Google." **That path is dead.** Don't send the user down it — they'll hit a wall and think they broke something. The API key is the only way in.
+You may see older guides (and even the plugin's own help text) say "run `!gemini` and sign in with Google." **That path is dead.** Don't send the user down it. They'll hit a wall and think they broke something. The API key is the only way in.
 
 Walk them through it:
 
 1. Go to **[aistudio.google.com/apikey](https://aistudio.google.com/apikey)** and sign in with a Google account.
-2. Click **Create API key**. It's free — the free tier is generous and no credit card is required.
+2. Click **Create API key**. It's free. The free tier is generous and no credit card is required.
 3. Copy the key (it starts with `AIza...`).
 
 Then set it as an environment variable so it persists across restarts.
 
-**Never ask them to paste the key into this chat.** Anything typed here is saved in the transcript forever, and a key in a transcript is a leaked key. Give them the command below with the placeholder left in, and have **them** run it in their own terminal with their real key swapped in. Don't ask to see it, don't ask them to confirm the first few characters, and don't `echo $GEMINI_API_KEY` back to check — just have them run `/gemini:status` (Step 4) to prove it worked.
+**Never ask them to paste the key into this chat.** Anything typed here is saved in the transcript forever, and a key in a transcript is a leaked key. Give them the command below with the placeholder left in, and have **them** run it in their own terminal with their real key swapped in. Don't ask to see it, don't ask them to confirm the first few characters, and don't `echo $GEMINI_API_KEY` back to check. Just have them run `/gemini:status` (Step 5) to prove it worked.
 
-**macOS / Linux** — figure out their shell first (`echo $SHELL`), then append to the right profile:
+**macOS / Linux.** Figure out their shell first (`echo $SHELL`), then append to the right profile:
 
 ```bash
 # zsh (the default on modern macOS)
@@ -113,31 +114,74 @@ They must **fully quit and reopen Claude Code** so it picks up the new environme
 /gemini:status
 ```
 
-If it still says unauthenticated, the usual cause is that Claude Code was started before the variable was set — quit it completely (not just the window) and reopen.
+If it still says unauthenticated, the usual cause is that Claude Code was started before the variable was set. Quit it completely (not just the window) and reopen.
 
 ---
 
-## Step 4 — Confirm all three brains are up
+## Step 4 (optional): install the fourth brain, Grok Build
 
-Run both:
+Ask the user one plain question: *"Do you want Grok wired in too? It's optional. It needs a Grok account and about three more minutes. Codex and Gemini already give you the full router."* If they say no, skip to Step 5. Never push it.
+
+If they say yes:
+
+**a. Install the Grok Build CLI.** This is xAI's official installer. macOS and Linux only. On Windows the installer is a bash script, so unless they are in WSL, tell them Grok is a skip for now and move on.
+
+```bash
+curl -fsSL https://x.ai/cli/install.sh | bash
+```
+
+They need a **new terminal** afterwards so `grok` is on their PATH.
+
+**b. Sign in.** Opens a browser to x.ai. No key is typed anywhere, so there is nothing to protect in chat.
+
+```
+!grok login --oauth
+```
+
+**c. Install the plugin:**
+
+```
+/plugin marketplace add xai-org/grok-build-plugin-cc
+/plugin install grok-build@xai-grok-build
+```
+
+**d. Check it took:**
+
+```
+/grok-build:check
+```
+
+One thing to know, and to tell them in one sentence if they are on a Mac with Docker Desktop: Grok's read-only sandbox can refuse to start on those machines, and this skill ships a wrapper (`scripts/grok-consult.sh`) that handles it. They don't need to do anything. Claude uses it automatically.
+
+---
+
+## Step 5: confirm the brains are up
+
+Run:
 
 ```
 /codex:status
 /gemini:status
 ```
 
-Both should report ready. If one doesn't, fix that one before telling the user they're done — a half-installed router is worse than none, because it fails silently mid-task.
+And if they installed Grok:
+
+```
+/grok-build:check
+```
+
+Codex and Gemini must both report ready. If one doesn't, fix that one before telling the user they're done. A half-installed router is worse than none, because it fails silently mid-task. Grok is a bonus: if its check fails, say so in one line and carry on.
 
 ---
 
-## Step 5 — Tell them they're done
+## Step 6: tell them they're done
 
 Say something like:
 
-> You're all set — you've got three brains now. Claude drives by default, and it'll automatically pull in **Codex** for a second opinion when a bug beats it twice, and **Gemini** for huge files, long documents, or video.
+> You're all set. You've got three brains now (four, if you added Grok). Claude drives by default, and it'll automatically pull in **Codex** for a second opinion when a bug beats it twice, and **Gemini** for huge files, long documents, or video.
 >
-> Try it: ask me to **"debate this"** or **"ask all three"** on any tough call and you'll get all three answers side by side, with the disagreements called out.
+> Try it: ask me to **"debate this"** or **"ask all three"** on any tough call and you'll get every answer side by side, with the disagreements called out.
 >
-> You can also go direct any time: `/codex:review` to have GPT tear apart your last change before you ship it.
+> You can also go direct any time: `/codex:review` to have GPT tear apart your last change before you ship it, or **"ask Grok"** for a third opinion.
 
-Don't oversell it. It's a router — it earns its keep quietly.
+Don't oversell it. It's a router. It earns its keep quietly.
