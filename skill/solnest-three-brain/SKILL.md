@@ -14,6 +14,23 @@ description: >-
 
 # Solnest Three-Brain Router
 
+## Your own changes (read first, every time)
+
+Before anything else, read `~/.solnest/three-brain/my-instructions.md` if it exists and
+follow it. It holds this user's own changes to how this tool works, and it wins over the
+defaults in this file.
+
+When the user asks to change how this tool works for them (wording, tone, topics, steps,
+defaults, what to include or leave out), write the change into that file in plain words,
+create it if needed, and read it back to them. **Never edit this tool's own files for
+that.** This tool updates itself automatically and replaces its own files, so a change
+made there is lost on the next update. Their sign-ins are never touched by an update
+either: the Gemini key file (`~/.solnest/three-brain/.env`, or a key already in their
+shell profile), the Codex and Grok logins, and the three plugins all live outside this
+skill folder.
+
+## What this is
+
 Claude is the default driver. Codex (GPT) and Gemini are on tap through their plugins, and Grok Build can be wired in as an optional fourth. This skill is the routing policy that decides when to pull one of them in, plus the consensus and debate modes.
 
 The underlying commands come from the installed plugins:
@@ -56,7 +73,7 @@ The underlying commands come from the installed plugins:
 **Use the wrapper for consults and reviews:**
 
 ```bash
-~/.claude/skills/solnest-three-brain/scripts/grok-consult.sh <source_dir> "<question>" [output_file]
+bash ~/.claude/skills/solnest-three-brain/scripts/grok-consult.sh <source_dir> "<question>" [output_file]
 ```
 
 It copies `<source_dir>` to a throwaway temp folder and runs Grok there with `--sandbox workspace` (read anywhere, write only inside the copy), so the real project cannot be touched. The copy is deleted when the run ends.
@@ -100,7 +117,7 @@ You can always skip the router and hit a model directly with `/codex:*`, `/gemin
 If a rescue or review reports that the model is missing or unauthenticated, stop and fix the auth. Don't silently fall back to Claude-only without saying so.
 
 - **Codex** signs in with a ChatGPT account (any tier, including Free) or an OpenAI API key: run `!codex login`, or `/codex:setup` to check.
-- **Gemini** needs a **`GEMINI_API_KEY`** in the environment. Get one free at [aistudio.google.com/apikey](https://aistudio.google.com/apikey).
+- **Gemini** needs a **`GEMINI_API_KEY`**. Check with `bash ~/.claude/skills/solnest-three-brain/scripts/gemini-key.sh status` (it never prints the key). Get one free at [aistudio.google.com/apikey](https://aistudio.google.com/apikey). Never ask for the key in chat and never print it: `gemini-key.sh open` opens the key file for the user to paste into, and `gemini-key.sh apply` switches it on. The steps are in `SETUP.md` in this skill folder.
 
   Warning: **interactive `gemini` CLI sign-in with a Google account no longer works.** If Gemini reports itself unauthenticated, do **not** tell the user to run `!gemini` and sign in. That path is dead. The API key is the only way in. Point them at `SETUP.md` in this skill folder.
 - **Grok** (optional) signs in with `grok login --oauth`, then `/grok-build:check` confirms it. If the Grok Build CLI or plugin was never installed, say so once and carry on with Codex and Gemini. Setup steps are in `SETUP.md`.

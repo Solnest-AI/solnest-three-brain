@@ -2,20 +2,12 @@
 
 ## 1.2.0
 
-- **Grok Build is now an optional fourth brain.** The router can pull in Grok
-  through xAI's official `grok-build@xai-grok-build` plugin: a third independent
-  review, visual or design critique of rendered output, or whenever you say
-  "ask Grok" or "what does Grok think". Nothing changes if you skip it; Codex and
-  Gemini still work exactly as before.
-- **New `scripts/grok-consult.sh`.** Grok's read-only sandbox refuses to start on
-  some Macs (Docker Desktop's `docker.sock` symlink), which breaks the plugin's
-  `review` and `critique` commands. The wrapper copies your files to a throwaway
-  folder and runs Grok there in its `workspace` sandbox, so the real project can
-  never be touched. `SKILL.md` tells Claude to use it, and never to run Grok
-  with no sandbox at all.
-- `SETUP.md`, `START-HERE.md`, and `UPDATE.md` walk through the optional Grok
-  install and add `/grok-build:check` to the health checks.
-- House style pass on all docs.
+- **New way to install: paste this repo's link into Claude Code and say "set this up".** Claude installs the skill, adds the plugins from their makers' own marketplaces, and checks each sign-in. Already have an older copy? Do the same thing once. Your sign-ins stay.
+- **Updates install themselves.** Once a day, in the background, from published releases only. If a new release does not start, the old one is put back by itself. An update never touches your sign-ins, your Gemini key, or any file you added. Changes you ask for are kept in `~/.solnest/three-brain/my-instructions.md`.
+- **Grok is now an optional fourth brain.** The router can bring in Grok through xAI's own `grok-build@xai-grok-build` plugin: a third review, a critique of how something looks, or whenever you say "ask Grok". Nothing changes if you skip it.
+- **New `scripts/grok-consult.sh`.** Grok's read-only mode refuses to start on some Macs (the ones with Docker Desktop), which breaks the plugin's review commands. The script copies your files to a throwaway folder and runs Grok there, so the real project can never be touched.
+- **The Gemini key no longer goes through a terminal command.** Setup opens a small file, you paste the key and save. It never appears in the chat. A key you already set by hand keeps working.
+- The skill folder is now only the skill. The old setup pages are gone from it.
 
 ## 1.1.0
 

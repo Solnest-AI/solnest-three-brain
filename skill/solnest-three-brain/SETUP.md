@@ -1,6 +1,6 @@
-# Setup: the other brains
+# Fixes: the other brains
 
-You only need this file if something stopped working, or if you skipped the guided install. Normally `START-HERE.md` does all of this for you.
+You only need this page if something stopped working. The guided setup (paste the GitHub link into Claude Code and say "set this up") does all of this for you, and it is safe to run again.
 
 The router itself is just text. **The models it routes to are separate plugins**, and each needs to be installed and signed in. If one is missing, the router quietly loses that brain.
 
@@ -35,26 +35,21 @@ This is the one thing people get stuck on. Older guides say to run `!gemini` and
 2. Click **Create API key**. It's free, and there's no credit card required.
 3. Copy it. It starts with `AIza...`.
 
-Set it so it survives a restart:
+Never paste the key into the chat. Ask Claude to "open my Gemini key file", or run:
 
-**macOS (zsh, the default):**
 ```bash
-echo 'export GEMINI_API_KEY="your-key-here"' >> ~/.zshrc
-source ~/.zshrc
+bash ~/.claude/skills/solnest-three-brain/scripts/gemini-key.sh open
 ```
 
-**Linux (bash):**
+A small text file opens (`~/.solnest/three-brain/.env`). Paste the key right after `GEMINI_API_KEY=`, save, close. Then:
+
 ```bash
-echo 'export GEMINI_API_KEY="your-key-here"' >> ~/.bashrc
-source ~/.bashrc
+bash ~/.claude/skills/solnest-three-brain/scripts/gemini-key.sh apply
 ```
 
-**Windows (PowerShell):**
-```powershell
-setx GEMINI_API_KEY "your-key-here"
-```
+That adds one line to your shell profile that loads the file (Mac, Linux), or saves the key as a user environment variable (Windows). A key you already set by hand in your shell profile keeps working. You do not need both.
 
-Then **fully quit and reopen Claude Code**, not just the window. It reads environment variables at startup, so a key set after launch won't be seen.
+Then **fully quit and reopen Claude Code**, not just the window. It reads the key when it starts, so a key added after launch is not seen.
 
 Check: `/gemini:status`
 
@@ -96,7 +91,7 @@ Grok's `read-only` sandbox can refuse to start when `/var/run/docker.sock` is a 
 The fix is already in this skill: `scripts/grok-consult.sh` copies your files to a throwaway folder and runs Grok there in its `workspace` sandbox, so the real project cannot be touched. Claude knows to use it. If you run it yourself:
 
 ```bash
-~/.claude/skills/solnest-three-brain/scripts/grok-consult.sh <folder> "your question"
+bash ~/.claude/skills/solnest-three-brain/scripts/grok-consult.sh <folder> "your question"
 ```
 
 Never "fix" this by running Grok with no sandbox. Headless runs auto-approve every tool call, so the sandbox is the only thing between Grok and your files.
@@ -118,7 +113,10 @@ Codex and Gemini ready means the router is live. Grok is a bonus.
 ## Troubleshooting
 
 **`/gemini:status` still says unauthenticated.**
-Nine times out of ten, Claude Code was already running when you set the key. Quit it completely and reopen. To prove the key is actually in your environment, run `echo $GEMINI_API_KEY` (macOS/Linux) or `echo $env:GEMINI_API_KEY` (PowerShell) in a **fresh** terminal. If that comes back empty, the key never made it into your shell profile.
+Nine times out of ten, Claude Code was already running when the key was saved. Quit it completely and reopen. To check without showing the key, run `bash ~/.claude/skills/solnest-three-brain/scripts/gemini-key.sh status`. `[ok]` means Claude Code sees it. `[..]` means the key is in the file but not switched on yet: run `apply`, then quit and reopen. `[--]` means there is no key yet.
+
+**Gemini says it is "not running in a trusted directory".**
+Newer Gemini versions want a folder marked as trusted before they work in it. Gemini's own message says how: open a terminal in that project folder, run `gemini`, and trust the folder when it asks. Then try again.
 
 **It's telling me to sign in with Google.**
 Ignore it. That's stale help text inside the Gemini plugin. Get an API key instead.
@@ -139,4 +137,4 @@ The router only pulls in another model when the situation calls for it: a bug th
 
 ## Your keys are yours
 
-Everything lives in **your** environment: your shell profile, your machine, the CLIs' own credential stores. Nothing is ever written into this skill folder, and nothing here phones home. If you ever want out, delete the `GEMINI_API_KEY` line from your profile, run `!codex logout`, and run `grok logout` if you installed Grok.
+Everything lives on **your** machine: your Gemini key file (`~/.solnest/three-brain/.env`), and the Codex and Grok tools' own sign-in stores. Nothing is ever written into this skill folder, and nothing is sent to Solnest AI. If you ever want out, delete the key file and the one line marked "Solnest Three-Brain" in your shell profile, run `!codex logout`, and run `grok logout` if you installed Grok.
