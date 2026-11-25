@@ -147,10 +147,10 @@ claude plugin marketplace add xai-org/grok-build-plugin-cc && claude plugin inst
 
 (The first line is xAI's own installer. If `claude` is not found, the user types `/plugin marketplace add xai-org/grok-build-plugin-cc` and `/plugin install grok-build@xai-grok-build`.)
 
-Then the sign-in. Tell the user: "Type `!~/.grok/bin/grok login --oauth` in the chat box and press Enter. A browser page opens. Sign in to your Grok account." When they say done, check it:
+Then the sign-in. Tell the user: "Type `!~/.grok/bin/grok login --oauth` in the chat box and press Enter. A browser page opens. Sign in to your Grok account." When they say done, check it (it tries three times, because the first try right after a sign-in can miss):
 
 ```bash
-"$HOME/.grok/bin/grok" models 2>&1 | grep -i "logged in" || echo "not signed in yet"
+ok=""; for i in 1 2 3; do "$HOME/.grok/bin/grok" models 2>&1 | grep -i "logged in" && { ok=1; break; }; sleep 2; done; [ -n "$ok" ] || echo "not signed in yet"
 ```
 
 ### Step 7: Real check (read-only)
